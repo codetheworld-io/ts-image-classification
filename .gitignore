@@ -1,2 +1,4 @@
 node_modules
 dist
+mobilenet/*
+!mobilenet/.keepme
