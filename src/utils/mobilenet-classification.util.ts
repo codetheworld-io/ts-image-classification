@@ -9,10 +9,12 @@ class MobilenetClassification {
       return this.mobilenetModel;
     }
 
+    const customModelUrl = process.env.MODEL_PATH;
+
     this.mobilenetModel = await mobilenet.load({
       version: 2,
       alpha: 1.0,
-      modelUrl: `file://${process.env.MODEL_PATH}`,
+      modelUrl: customModelUrl ? `file://${customModelUrl}` : undefined,
     });
     return this.mobilenetModel;
   }

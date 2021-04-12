@@ -20,10 +20,16 @@ describe('MobilenetClassification', () => {
     mobilenetMock.load.mockResolvedValue(mobilenetModelMock);
 
     tfnodeMock = mocked(tfnode) as never;
+
+    mobilenetClassificationUtil.mobilenetModel = undefined;
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   describe('loadModel', () => {
-    it('should load the model once with correct params', async () => {
+    it('should load the model once with custom version', async () => {
       await mobilenetClassificationUtil.loadModel();
       const actual = await mobilenetClassificationUtil.loadModel();
 
@@ -33,7 +39,23 @@ describe('MobilenetClassification', () => {
       expect(mobilenetMock.load).toHaveBeenCalledWith({
         version: 2,
         alpha: 1.0,
-        modelUrl: expect.any(String),
+        modelUrl: undefined,
+      });
+    });
+
+    it('should load the model once with custom model url', async () => {
+      const customModelUrl = 'custom-model-path';
+      process.env.MODEL_PATH = customModelUrl;
+
+      const actual = await mobilenetClassificationUtil.loadModel();
+
+      expect(actual).toBe(mobilenetModelMock);
+      expect(actual).toBe(mobilenetClassificationUtil.mobilenetModel);
+      expect(mobilenetMock.load).toHaveBeenCalledTimes(1);
+      expect(mobilenetMock.load).toHaveBeenCalledWith({
+        version: 2,
+        alpha: 1.0,
+        modelUrl: `file://${customModelUrl}`,
       });
     });
   });
